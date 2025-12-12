@@ -1,0 +1,5 @@
+{
+  "name": "ScooterOps Dashboard",
+  "description": "Real-time monitoring system for shared scooter operations, featuring DevOps metrics, operational KPIs, trend visualization, and intelligent alerting based on simulated Docker Swarm microservices data.",
+  "requestFramePermissions": []
+}

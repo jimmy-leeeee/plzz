@@ -1,0 +1,33 @@
+# ========= 1. Build stage：用 Node 把 Vite 專案 build 出 dist =========
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+# 先裝套件（利用快取）
+COPY package*.json ./
+RUN npm ci
+
+# 拷貝剩下程式碼（包含 src、index.html、vite.config.ts、環境檔等）
+COPY . .
+
+# 可以用 build args 把 VITE_API_URL 傳進來（給 docker-compose 用）
+ARG VITE_API_URL=http://100.73.255.39:8000/api
+ENV VITE_API_URL=${VITE_API_URL}
+
+# Vite build
+RUN npm run build
+
+
+# ========= 2. Run stage：用 nginx 服務靜態檔案 =========
+FROM nginx:alpine
+
+# 把 build 完的前端丟到 nginx 預設靜態目錄
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# 如果之後要做 SPA router fallback，可以再額外 COPY nginx.conf
+# COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

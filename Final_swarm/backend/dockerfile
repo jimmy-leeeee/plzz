@@ -1,0 +1,41 @@
+#FROM python:3.11-slim
+
+#WORKDIR /app
+
+# Install dependencies
+#COPY requirements.txt .
+#RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all backend files
+#COPY . .
+
+#ENV FLASK_APP=main.py
+#ENV FLASK_ENV=production
+
+#EXPOSE 8000
+
+#CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+
+
+
+FROM python:3.11-slim
+
+# 讓 log 直接輸出到 console，比較好在 docker logs 看到
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+
+# 先裝依賴
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 再把後端程式拷進來
+COPY . .
+
+# 對外開 8000，給前端 / 其他 service 存取
+EXPOSE 8000
+
+# 用你本來在本機測試過的方式啟動
+CMD ["python", "main.py"]

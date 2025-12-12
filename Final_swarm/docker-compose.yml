@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dashboard_net
+
+  generator:
+    build:
+      context: ./generator
+      dockerfile: dockerfile   # 這是你放在 generator 資料夾裡的 dockerfile 檔名
+    container_name: generator
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./generator/.env        # 裡面記得用 DB_HOST=db
+    networks:
+      - dashboard_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile    # 後端那個 Dockerfile
+    container_name: backend
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env          # 裡面 DB_HOST 也要寫 db
+    ports:
+      - "8000:8000"
+    networks:
+      - dashboard_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile    # 前端那個兩階段 build 的 Dockerfile
+      args:
+        # 給 Vite build 用，讓前端在容器內呼叫 backend 這個 service
+        VITE_API_URL: "http://backend:8000/api"
+    container_name: frontend
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "3000:80"               # 外部瀏覽器看 http://localhost:3000
+    networks:
+      - dashboard_net
+
+volumes:
+  db_data:
+
+networks:
+  dashboard_net:
+    driver: bridge
