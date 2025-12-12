@@ -1,0 +1,62 @@
+name: Deploy to Swarm
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        run: echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+
+      - name: Ensure buildx
+        run: |
+          docker buildx create --use --name multi || docker buildx use multi
+          docker buildx inspect --bootstrap
+
+      - name: Build & Push backend
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t testforccsa/final-v3:backend \
+            -f backend/Dockerfile backend \
+            --push
+
+      - name: Build & Push frontend
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t testforccsa/final-v3:frontend \
+            -f frontend/Dockerfile frontend \
+            --push
+
+      - name: Build & Push generator
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t testforccsa/final-v3:generator \
+            -f generator/Dockerfile generator \
+            --push
+
+      - name: Build & Push db
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t testforccsa/final-v3:db \
+            -f db/Dockerfile db \
+            --push
+
+      - name: Deploy to Swarm
+        run: |
+          docker info
+          docker stack deploy -c stack.yaml ccsa
