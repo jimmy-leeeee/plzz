@@ -29,7 +29,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t testforccsa/final-v3:backend \
-            -f backend/Dockerfile backend \
+            -f Final_swarm/backend/Dockerfile Final_swarm/backend \
             --push
 
       - name: Build & Push frontend
@@ -37,7 +37,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t testforccsa/final-v3:frontend \
-            -f frontend/Dockerfile frontend \
+            -f Final_swarm/frontend/Dockerfile Final_swarm/frontend \
             --push
 
       - name: Build & Push generator
@@ -45,7 +45,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t testforccsa/final-v3:generator \
-            -f generator/Dockerfile generator \
+            -f Final_swarm/generator/Dockerfile Final_swarm/generator \
             --push
 
       - name: Build & Push db
@@ -53,7 +53,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t testforccsa/final-v3:db \
-            -f db/Dockerfile db \
+            -f Final_swarm/db/Dockerfile Final_swarm/db \
             --push
 
       - name: Deploy to Swarm
