@@ -11,6 +11,7 @@ jobs:
     env:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      IMAGE_TAG: final-v4   # <-- 只改這裡就能換版本
 
     steps:
       - name: Checkout code
@@ -28,7 +29,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t testforccsa/final-v3:backend \
+            -t testforccsa/${IMAGE_TAG}:backend \
             -f Final_swarm/backend/Dockerfile Final_swarm/backend \
             --push
 
@@ -36,7 +37,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t testforccsa/final-v3:frontend \
+            -t testforccsa/${IMAGE_TAG}:frontend \
             -f Final_swarm/frontend/Dockerfile Final_swarm/frontend \
             --push
 
@@ -44,7 +45,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t testforccsa/final-v3:generator \
+            -t testforccsa/${IMAGE_TAG}:generator \
             -f Final_swarm/generator/Dockerfile Final_swarm/generator \
             --push
 
@@ -52,7 +53,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t testforccsa/final-v3:db \
+            -t testforccsa/${IMAGE_TAG}:db \
             -f Final_swarm/db/Dockerfile Final_swarm/db \
             --push
 
