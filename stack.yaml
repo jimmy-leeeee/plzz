@@ -3,7 +3,7 @@ version: "3.9"
 services:
   # ========== DB Service (Worker only) ==========
   db:
-    image: testforccsa/final-v3:db
+    image: testforccsa/final-v4:db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,7 +29,7 @@ services:
 
   # ========== Generator Service (Manager) ==========
   generator:
-    image: testforccsa/final-v3:generator
+    image: testforccsa/final-v4:generator
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -52,7 +52,7 @@ services:
 
   # ========== Backend API Service (Manager) ==========
   backend:
-    image: testforccsa/final-v3:backend
+    image: testforccsa/final-v4:backend
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -79,7 +79,7 @@ services:
 
   # ========== Frontend Web Service (Manager) ==========
   frontend:
-    image: testforccsa/final-v3:frontend
+    image: testforccsa/final-v4:frontend
     ports:
       - target: 80
         published: 80
