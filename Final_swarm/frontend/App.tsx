@@ -144,7 +144,7 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-6 font-sans selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-emerald-950 text-slate-200 p-4 md:p-6 font-sans selection:bg-cyan-500/30">
       
       {/* Header Area */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
