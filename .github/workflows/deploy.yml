@@ -11,7 +11,7 @@ jobs:
     env:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      IMAGE_TAG: final-v4   # <-- 只改這裡就能換版本
+      IMAGE_TAG: final-v4   
 
     steps:
       - name: Checkout code
